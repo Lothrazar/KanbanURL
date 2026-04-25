@@ -10,6 +10,7 @@ function loadSettings() {
     if (typeof saved.cardNameLimit === 'number') settings.cardNameLimit = saved.cardNameLimit;
     if (saved.theme) settings.theme = saved.theme;
     if (saved.colColors) Object.assign(settings.colColors, saved.colColors);
+    if (saved.celebrations) Object.assign(settings.celebrations, saved.celebrations);
   } catch (e) {}
 }
 
@@ -65,6 +66,12 @@ function saveSettings() {
   settings.colColors.inprogress = document.getElementById('st-col-2').value;
   settings.colColors.done       = document.getElementById('st-col-3').value;
 
+  const celebKeys = Object.keys(settings.celebrations);
+  const enabledCelebs = celebKeys.filter(k => document.getElementById('st-celeb-' + k).checked);
+  if (enabledCelebs.length > 0) {
+    celebKeys.forEach(k => { settings.celebrations[k] = enabledCelebs.includes(k); });
+  }
+
   applySettings();
   persistSettings();
   _settingsSnap = null;
@@ -90,7 +97,22 @@ function _populateSettingsForm() {
   document.getElementById('st-col-1').value = settings.colColors.todo;
   document.getElementById('st-col-2').value = settings.colColors.inprogress;
   document.getElementById('st-col-3').value = settings.colColors.done;
+
+  Object.keys(settings.celebrations).forEach(k => {
+    const cb  = document.getElementById('st-celeb-' + k);
+    const lbl = cb.closest('.celeb-opt');
+    cb.checked = settings.celebrations[k];
+    lbl.classList.toggle('sel', cb.checked);
+  });
 }
+
+document.querySelectorAll('.celeb-opt input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const allChecked = [...document.querySelectorAll('.celeb-opt input')].filter(i => i.checked);
+    if (allChecked.length === 0) { cb.checked = true; }
+    cb.closest('.celeb-opt').classList.toggle('sel', cb.checked);
+  });
+});
 
 document.addEventListener('keydown', e => {
   if (!document.getElementById('settings-overlay').classList.contains('open')) return;

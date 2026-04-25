@@ -29,7 +29,16 @@ let settings = {
     todo:       '#6366f1',
     inprogress: '#f59e0b',
     done:       '#10b981'
-  }
+  },
+  celebrations: {
+    confetti:      true,
+    fireworks:     true,
+    bubbles:       true,
+    stars:         true,
+    hearts:        true,
+    rainbow:       true,
+    shootingStars: true,
+  },
 };
 
 const DEFAULT_SETTINGS = {
@@ -40,5 +49,14 @@ const DEFAULT_SETTINGS = {
     todo:       '#6366f1',
     inprogress: '#f59e0b',
     done:       '#10b981'
-  }
+  },
+  celebrations: {
+    confetti:      true,
+    fireworks:     true,
+    bubbles:       true,
+    stars:         true,
+    hearts:        true,
+    rainbow:       true,
+    shootingStars: true,
+  },
 };

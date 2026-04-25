@@ -222,3 +222,36 @@
 }
 
 .st-reset-btn { margin-right: auto; }
+
+.celeb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.celeb-opt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--surface2);
+  transition: border-color 0.15s;
+  user-select: none;
+}
+
+.celeb-opt input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.celeb-opt:hover { border-color: var(--muted); }
+.celeb-opt:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.celeb-opt.sel { border-color: var(--accent); background: rgba(99,102,241,0.1); }

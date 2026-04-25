@@ -11,11 +11,22 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
+const CELEB_FNS = {
+  confetti:      runConfetti,
+  fireworks:     runFireworks,
+  bubbles:       runBubbles,
+  stars:         runStars,
+  hearts:        runHearts,
+  rainbow:       runRainbow,
+  shootingStars: runShootingStars,
+};
+
 function celebrate() {
-  const fns = [runConfetti, runFireworks, runBubbles, runStars, runHearts, runRainbow];
+  const enabled = Object.keys(CELEB_FNS).filter(k => settings.celebrations[k]);
+  const pool = enabled.length ? enabled : Object.keys(CELEB_FNS);
   if (animId) cancelAnimationFrame(animId);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  fns[Math.floor(Math.random() * fns.length)]();
+  CELEB_FNS[pool[Math.floor(Math.random() * pool.length)]]();
 }
 
 function runConfetti() {
@@ -122,12 +133,16 @@ function runBubbles() {
 }
 
 function runStars() {
+  const colors = ['#fbbf24', '#f9fafb', '#67e8f9', '#fde68a', '#c4b5fd'];
   const stars = Array.from({ length: 80 }, () => ({
     x:     Math.random() * canvas.width,
     y:     Math.random() * canvas.height,
     r:     3 + Math.random() * 5,
     phase: Math.random() * Math.PI * 2,
-    spd:   0.05 + Math.random() * 0.08,
+    spd:   0.0015 + Math.random() * 0.002,
+    vx:    (Math.random() - 0.5) * 0.4,
+    vy:    (Math.random() - 0.5) * 0.4,
+    color: colors[Math.floor(Math.random() * colors.length)],
   }));
   let t0 = null;
   function frame(ts) {
@@ -135,9 +150,10 @@ function runStars() {
     const elapsed = ts - t0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     stars.forEach(s => {
+      s.x += s.vx; s.y += s.vy;
       const alpha = (Math.sin(elapsed * s.spd + s.phase) + 1) / 2;
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = '#fbbf24';
+      ctx.fillStyle = s.color;
       ctx.save();
       ctx.translate(s.x, s.y);
       ctx.beginPath();
@@ -152,6 +168,48 @@ function runStars() {
     });
     ctx.globalAlpha = 1;
     if (elapsed < 3200) animId = requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  animId = requestAnimationFrame(frame);
+}
+
+function runShootingStars() {
+  const colors = ['#fbbf24', '#f9fafb', '#67e8f9', '#c4b5fd'];
+  const stars = Array.from({ length: 36 }, (_, i) => {
+    const angle = Math.PI * 0.1 + Math.random() * Math.PI * 0.25;
+    const spd   = 8 + Math.random() * 10;
+    return {
+      x:     Math.random() * canvas.width,
+      y:     -20 - i * 60,
+      vx:    Math.cos(angle) * spd,
+      vy:    Math.sin(angle) * spd,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      trail: [],
+    };
+  });
+  let t0 = null;
+  function frame(ts) {
+    if (!t0) t0 = ts;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.trail.push({ x: s.x, y: s.y });
+      if (s.trail.length > 28) s.trail.shift();
+      s.x += s.vx; s.y += s.vy;
+      s.trail.forEach((pt, i) => {
+        ctx.globalAlpha = (i / s.trail.length) * 0.8;
+        ctx.fillStyle = s.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, (i / s.trail.length) * 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    if (ts - t0 < 3200) animId = requestAnimationFrame(frame);
     else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   animId = requestAnimationFrame(frame);
