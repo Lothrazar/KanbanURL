@@ -104,7 +104,7 @@
 }
 
 .sz-rl:hover { border-color: var(--muted); }
-.sz-rl:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sz-rl:focus-within, .sz-rl:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .sz-rl.sel   { border-color: var(--accent); background: rgba(99,102,241,0.1); }
 
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }

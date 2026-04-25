@@ -106,10 +106,9 @@ function buildCard(card) {
   // Size dots
   const dotsEl = document.createElement('div');
   dotsEl.className = 'size-dots';
-  const bright = card.z === 4;
   for (let i = 0; i < 3; i++) {
     const d = document.createElement('div');
-    d.className = 'dot' + (i < (card.z || 0) ? (' on' + (bright ? ' bright' : '')) : '');
+    d.className = 'dot' + (i < card.z ? ' on' : '');
     dotsEl.appendChild(d);
   }
   foot.appendChild(dotsEl);

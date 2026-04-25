@@ -11,11 +11,10 @@ const COLS = [
 ];
 
 const SIZES = [
-  { v: 0, label: '—' },
-  { v: 1, label: 'Tiny' },
-  { v: 2, label: 'Small' },
-  { v: 3, label: 'Medium' },
-  { v: 4, label: 'Large' },
+  { v: 0, label: 'Tiny' },
+  { v: 1, label: 'Small' },
+  { v: 2, label: 'Medium' },
+  { v: 3, label: 'Large' },
 ];
 
 function uid() {

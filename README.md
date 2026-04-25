@@ -22,7 +22,7 @@ The board title is part of the URL state and travels with the board when shared.
 - Card size indicator: None / Tiny / Small / Medium / Large (shown as filled dots)
 - Editable board title (encoded in the URL)
 - "Share Board" button copies the current URL to your clipboard
-- URL budget meter in the footer (green → amber → red, target 8,000 chars)
+- URL budget meter in the footer (green → amber → red) — see [URL length budget](#url-length-budget)
 - Hard cap of 70 cards per board
 - **Settings panel** (gear icon, footer bottom-right):
   - Light / Dark / System theme
@@ -81,8 +81,23 @@ State is a plain JS object. Keys are short to keep the URL compact.
 |-----|----------|--------------------------------------------|
 | `i` | id       | random base-36, 6 chars                    |
 | `n` | name     | string, max N chars (configurable, default 20) |
-| `z` | size     | 0=None, 1=Tiny, 2=Small, 3=Medium, 4=Large |
+| `z` | size     | 0=Tiny, 1=Small, 2=Medium, 3=Large         |
 | `s` | status   | 0=Blocked, 1=To Do, 2=In Progress, 3=Done  |
+
+## URL length budget
+
+The footer shows a live meter for the length of the `?d=` value (the Base64URL-encoded data blob), capped at 8,000 characters. This is a round estimate — the real limits depend on context:
+
+| Constraint | Limit |
+|---|---|
+| nginx default (`large_client_header_buffers`) | 8,192 bytes — **full URL** |
+| Apache default (`LimitRequestLine`) | 8,190 bytes — **full URL** |
+| Modern browsers (Chrome, Firefox, Safari) | ~100 KB+ — not a practical concern |
+| IE 11 | 2,083 bytes — full URL |
+
+Because the full URL includes the protocol, host, path, and `?d=`, the data portion alone should stay under roughly **7,500–7,800 characters** to leave headroom against common server defaults. In practice the 70-card hard cap is hit long before the budget — a fully loaded board compresses to well under 2,000 characters.
+
+8,000 chars of Base64 ≈ 6,000 bytes of compressed JSON. Base64 expands the compressed payload by ~33%.
 
 ## Decoding a board URL manually
 

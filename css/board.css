@@ -152,8 +152,7 @@
   border: 1.5px solid var(--muted);
 }
 
-.dot.on        { background: var(--muted); border-color: var(--muted); }
-.dot.on.bright { background: #fbbf24;      border-color: #fbbf24; }
+.dot.on { background: #fbbf24; border-color: #fbbf24; }
 
 /* "+ Add card" */
 .add-card-btn {
