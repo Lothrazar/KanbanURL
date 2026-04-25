@@ -145,6 +145,7 @@ function mkBtn(icon, cls, title, handler) {
   const b = document.createElement('button');
   b.className = 'card-btn ' + cls;
   b.title = title;
+  b.setAttribute('aria-label', title);
   b.textContent = icon;
   b.addEventListener('click', e => { e.stopPropagation(); handler(e); });
   return b;

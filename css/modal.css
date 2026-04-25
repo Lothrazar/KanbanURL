@@ -70,7 +70,18 @@
   transition: border-color 0.15s;
 }
 
-.col-rl input { display: none; }
+.col-rl input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.col-rl:focus-within {
+  outline: 2px solid var(--ac);
+  outline-offset: 1px;
+}
 
 .col-rl[data-col="0"] { --ac: var(--col-blocked); }
 .col-rl[data-col="1"] { --ac: var(--col-todo); }
@@ -97,8 +108,16 @@
   transition: border-color 0.15s;
 }
 
-.sz-rl input { display: none; }
+.sz-rl input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .sz-rl:hover { border-color: var(--muted); }
+.sz-rl:focus-within { outline: 2px solid var(--col-todo); outline-offset: 1px; }
 .sz-rl.sel   { border-color: var(--col-todo); background: rgba(99,102,241,0.1); }
 
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
@@ -116,6 +135,7 @@
 }
 
 .btn-primary:hover { opacity: 0.84; }
+.btn-primary:focus-visible { outline: 2px solid var(--col-todo); outline-offset: 2px; }
 
 .btn-ghost {
   padding: 9px 18px;
@@ -129,3 +149,4 @@
 }
 
 .btn-ghost:hover { background: var(--border); }
+.btn-ghost:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }

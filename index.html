@@ -17,7 +17,7 @@
     <div class="logo-bars"><span></span><span></span><span></span></div>
     KanbanURL
   </a>
-  <input id="board-title" type="text" maxlength="50" spellcheck="false" value="My Project" />
+  <input id="board-title" type="text" maxlength="50" spellcheck="false" value="My Project" aria-label="Board title" />
   <button class="share-btn" id="share-btn">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
       <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -31,7 +31,7 @@
 
 <!-- Modal -->
 <div class="overlay" id="overlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
     <h2 id="m-title">Add Card</h2>
     <div class="field">
       <label class="field-label" for="m-name">Card Name</label>
@@ -62,7 +62,7 @@
 </footer>
 
 <canvas id="celebCanvas"></canvas>
-<div id="toast"></div>
+<div id="toast" aria-live="polite" aria-atomic="true"></div>
 
 <!-- Script load order matters: state → storage → render → modal → celebrate → main -->
 <script src="js/state.js"></script>

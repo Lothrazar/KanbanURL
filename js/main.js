@@ -11,7 +11,19 @@ document.getElementById('m-name').addEventListener('keydown', e => {
   if (e.key === 'Enter') saveModal();
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('overlay').classList.contains('open')) closeModal();
+  if (!document.getElementById('overlay').classList.contains('open')) return;
+  if (e.key === 'Escape') { closeModal(); return; }
+  if (e.key === 'Tab') {
+    const first = document.getElementById('m-name');
+    const last  = document.getElementById('m-save');
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
 });
 
 // Dismiss delete popovers when clicking outside

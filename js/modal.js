@@ -13,6 +13,8 @@ function openModal(id, defaultCol = 1) {
   // Column radios
   const colRadios = document.getElementById('col-radios');
   colRadios.innerHTML = '';
+  colRadios.setAttribute('role', 'radiogroup');
+  colRadios.setAttribute('aria-label', 'Column');
   const selCol = card !== null ? card.s : defaultCol;
   COLS.forEach(col => {
     const lbl = document.createElement('label');
@@ -21,7 +23,7 @@ function openModal(id, defaultCol = 1) {
     lbl.innerHTML =
       `<input type="radio" name="m-col" value="${col.id}" ${selCol === col.id ? 'checked' : ''}>` +
       `<div class="rl-dot"></div>${col.name}`;
-    lbl.addEventListener('click', () => {
+    lbl.querySelector('input').addEventListener('change', () => {
       colRadios.querySelectorAll('.col-rl').forEach(l => l.classList.remove('sel'));
       lbl.classList.add('sel');
     });
@@ -31,6 +33,8 @@ function openModal(id, defaultCol = 1) {
   // Size radios
   const sizeRadios = document.getElementById('size-radios');
   sizeRadios.innerHTML = '';
+  sizeRadios.setAttribute('role', 'radiogroup');
+  sizeRadios.setAttribute('aria-label', 'Size');
   const selSz = card ? card.z : 0;
   SIZES.forEach(sz => {
     const lbl = document.createElement('label');
@@ -38,7 +42,7 @@ function openModal(id, defaultCol = 1) {
     lbl.innerHTML =
       `<input type="radio" name="m-sz" value="${sz.v}" ${selSz === sz.v ? 'checked' : ''}>` +
       sz.label;
-    lbl.addEventListener('click', () => {
+    lbl.querySelector('input').addEventListener('change', () => {
       sizeRadios.querySelectorAll('.sz-rl').forEach(l => l.classList.remove('sel'));
       lbl.classList.add('sel');
     });
