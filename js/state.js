@@ -21,8 +21,9 @@ function uid() {
   return Math.random().toString(36).slice(2, 8);
 }
 
-let settings = {
-  cardNameLimit: 20,
+
+const DEFAULT_SETTINGS = {
+  cardNameLimit: 40,
   theme: 'dark',
   colColors: {
     blocked:    '#ef4444',
@@ -38,25 +39,8 @@ let settings = {
     hearts:        true,
     rainbow:       true,
     shootingStars: true,
+    balloons:      true,
   },
 };
 
-const DEFAULT_SETTINGS = {
-  cardNameLimit: 20,
-  theme: 'dark',
-  colColors: {
-    blocked:    '#ef4444',
-    todo:       '#6366f1',
-    inprogress: '#f59e0b',
-    done:       '#10b981'
-  },
-  celebrations: {
-    confetti:      true,
-    fireworks:     true,
-    bubbles:       true,
-    stars:         true,
-    hearts:        true,
-    rainbow:       true,
-    shootingStars: true,
-  },
-};
+let settings = deepClone(DEFAULT_SETTINGS);

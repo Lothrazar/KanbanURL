@@ -11,6 +11,59 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
+function runBalloons() {
+  const balloons = Array.from({ length: 30 }, () => ({
+    x:      Math.random() * canvas.width,
+    y:      canvas.height + 30 + Math.random() * 120,
+    vy:     -(1.2 + Math.random() * 2),
+    vx:     (Math.random() - 0.5) * 0.6,
+    w:      18 + Math.random() * 22,
+    sway:   Math.random() * Math.PI * 2,
+    swayS:  0.018 + Math.random() * 0.018,
+    color:  `hsl(${Math.random() * 360},85%,65%)`,
+  }));
+
+  function drawBalloon(x, y, w, color) {
+    const h = w * 1.25;
+    ctx.beginPath();
+    ctx.ellipse(x, y, w / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x - w * 0.14, y - h * 0.14, w * 0.11, h * 0.09, -0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x - 3, y + h / 2);
+    ctx.lineTo(x + 3, y + h / 2);
+    ctx.lineTo(x, y + h / 2 + 5);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x, y + h / 2 + 5);
+    ctx.bezierCurveTo(x + 9, y + h / 2 + 18, x - 9, y + h / 2 + 34, x + 5, y + h / 2 + 48);
+    ctx.strokeStyle = 'rgba(160,160,160,0.55)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  let t0 = null;
+  function frame(ts) {
+    if (!t0) t0 = ts;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    balloons.forEach(b => {
+      b.sway += b.swayS;
+      b.x += b.vx + Math.sin(b.sway) * 0.5;
+      b.y += b.vy;
+      drawBalloon(b.x, b.y, b.w, b.color);
+    });
+    if (ts - t0 < 3200) animId = requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  animId = requestAnimationFrame(frame);
+}
+
 const CELEB_FNS = {
   confetti:      runConfetti,
   fireworks:     runFireworks,
@@ -19,6 +72,7 @@ const CELEB_FNS = {
   hearts:        runHearts,
   rainbow:       runRainbow,
   shootingStars: runShootingStars,
+  balloons:      runBalloons,
 };
 
 function celebrate() {

@@ -127,6 +127,7 @@
         <label class="celeb-opt"><input type="checkbox" id="st-celeb-bubbles">       🫧 Bubbles</label>
         <label class="celeb-opt"><input type="checkbox" id="st-celeb-rainbow">       🌈 Rainbow</label>
         <label class="celeb-opt"><input type="checkbox" id="st-celeb-shootingStars"> ☄️ Shooting Stars</label>
+        <label class="celeb-opt"><input type="checkbox" id="st-celeb-balloons">       🎈 Balloons</label>
       </div>
     </div>
 
@@ -141,7 +142,8 @@
 <canvas id="celebCanvas"></canvas>
 <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Script load order matters: state → storage → settings → render → modal → celebrate → main -->
+<!-- Script load order matters: polyfill → state → storage → settings → render → modal → celebrate → main -->
+<script src="js/polyfill.js"></script>
 <script src="js/state.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/settings.js"></script>
