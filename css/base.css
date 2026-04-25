@@ -5,12 +5,22 @@
   --col-todo:       #6366f1;
   --col-inprogress: #f59e0b;
   --col-done:       #10b981;
+  --accent:         #6366f1;
   --bg:       #0f172a;
   --surface:  #1e293b;
   --surface2: #334155;
   --text:     #f1f5f9;
   --muted:    #94a3b8;
   --border:   #334155;
+}
+
+:root[data-theme="light"] {
+  --bg:       #f1f5f9;
+  --surface:  #ffffff;
+  --surface2: #f8fafc;
+  --text:     #0f172a;
+  --muted:    #64748b;
+  --border:   #e2e8f0;
 }
 
 body {
@@ -77,14 +87,14 @@ header {
 }
 
 #board-title:hover  { background: var(--surface2); }
-#board-title:focus  { outline: none; background: var(--surface2); border-color: var(--col-todo); cursor: text; }
+#board-title:focus  { outline: none; background: var(--surface2); border-color: var(--accent); cursor: text; }
 
 .share-btn {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: var(--col-todo);
+  background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -96,6 +106,22 @@ header {
 }
 
 .share-btn:hover { opacity: 0.82; }
+
+.new-board-btn {
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.new-board-btn:hover { color: var(--text); border-color: var(--muted); }
+.new-board-btn:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
 
 /*  FOOTER ─ */
 footer {
@@ -125,3 +151,22 @@ footer {
   transition: width 0.35s, background 0.35s;
   background: var(--col-done);
 }
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.settings-btn:hover { color: var(--text); border-color: var(--muted); }
+.settings-btn:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }

@@ -18,12 +18,13 @@ function render() {
     hdr.innerHTML =
       `<div class="col-pip"></div>` +
       `<span class="col-name">${col.name}</span>` +
-      `<span class="col-count">${colCards.length}</span>` +
-      (col.id === 3 ? `<button class="clear-done-btn" title="Delete all done cards">Clear done</button>` : '');
+      (col.id === 3 && colCards.length > 0 ? `<button class="clear-done-btn" title="Delete all done cards" tabindex="-1">Clear done</button>` : '') +
+      `<span class="col-count">${colCards.length}</span>`;
     colEl.appendChild(hdr);
 
-    if (col.id === 3) {
-      hdr.querySelector('.clear-done-btn').addEventListener('click', () => {
+    const clearBtn = hdr.querySelector('.clear-done-btn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
         state.cards = state.cards.filter(c => c.s !== 3);
         saveToURL();
         render();
@@ -57,6 +58,7 @@ function render() {
     // Add card button
     const addBtn = document.createElement('button');
     addBtn.className = 'add-card-btn';
+    addBtn.tabIndex = col.id + 1;
     addBtn.innerHTML = '<span>+</span> Add card';
     addBtn.addEventListener('click', () => openModal(null, col.id));
     colEl.appendChild(addBtn);
@@ -69,6 +71,7 @@ function buildCard(card) {
   const el = document.createElement('div');
   el.className = 'card';
   el.draggable = true;
+  el.tabIndex = 0;
   el.dataset.id = card.i;
 
   // Name
@@ -138,6 +141,27 @@ function buildCard(card) {
   });
   el.addEventListener('dragend', () => el.classList.remove('dragging'));
 
+  // Keyboard shortcuts on focused card
+  el.addEventListener('keydown', e => {
+    if (e.target !== el) return;
+    if (document.querySelector('.del-pop.open')) return;
+    if (card.s === 3) return; // Done col: no actions
+
+    if (e.key === 'e' || e.key === 'Enter') {
+      e.preventDefault();
+      openModal(card.i);
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      showDelPop(el);
+    } else if (e.key === 'b' && card.s !== 0) {
+      e.preventDefault();
+      moveCard(card.i, 0);
+    } else if (e.key === 'm' && (card.s === 1 || card.s === 2)) {
+      e.preventDefault();
+      moveCard(card.i, 3, true);
+    }
+  });
+
   return el;
 }
 
@@ -146,6 +170,7 @@ function mkBtn(icon, cls, title, handler) {
   b.className = 'card-btn ' + cls;
   b.title = title;
   b.setAttribute('aria-label', title);
+  b.tabIndex = -1;
   b.textContent = icon;
   b.addEventListener('click', e => { e.stopPropagation(); handler(e); });
   return b;

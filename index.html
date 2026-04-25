@@ -13,12 +13,13 @@
 <body>
 
 <header>
-  <a class="logo" href="https://github.com/yourusername/kanbanurl" target="_blank" rel="noopener" title="View source code">
+  <a class="logo" href="https://github.com/yourusername/kanbanurl" target="_blank" rel="noopener" title="View source code" tabindex="-1">
     <div class="logo-bars"><span></span><span></span><span></span></div>
     KanbanURL
   </a>
-  <input id="board-title" type="text" maxlength="50" spellcheck="false" value="My Project" aria-label="Board title" />
-  <button class="share-btn" id="share-btn">
+  <input id="board-title" type="text" maxlength="50" spellcheck="false" value="My Project" aria-label="Board title" tabindex="7" />
+  <button class="new-board-btn" id="new-board-btn" tabindex="5">New Board</button>
+  <button class="share-btn" id="share-btn" tabindex="6">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
       <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
       <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
@@ -32,15 +33,14 @@
 <!-- Modal -->
 <div class="overlay" id="overlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
-    <h2 id="m-title">Add Card</h2>
+    <div class="modal-header">
+      <h2 id="m-title">Add Card</h2>
+      <span class="col-tag" id="m-col-tag" data-col="1">In Progress</span>
+    </div>
     <div class="field">
       <label class="field-label" for="m-name">Card Name</label>
       <input id="m-name" type="text" maxlength="20" placeholder="What needs doing?" autocomplete="off" />
       <div class="char-count" id="char-count">0 / 20</div>
-    </div>
-    <div class="field">
-      <label class="field-label">Column</label>
-      <div class="col-radios" id="col-radios"></div>
     </div>
     <div class="field">
       <label class="field-label">Size</label>
@@ -59,14 +59,79 @@
     <div class="budget-fill" id="budget-fill" style="width:0%"></div>
   </div>
   <span id="card-count-label">0 cards</span>
+  <button class="settings-btn" id="settings-btn" title="Settings" aria-label="Settings">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  </button>
 </footer>
+
+<!-- Settings Modal -->
+<div class="overlay" id="settings-overlay">
+  <div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="st-title">
+    <div class="modal-header">
+      <h2 id="st-title">Settings</h2>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Theme</span>
+      <div class="seg-group" role="radiogroup" aria-label="Theme">
+        <label class="theme-opt"><input type="radio" name="st-theme" value="light"> Light</label>
+        <label class="theme-opt"><input type="radio" name="st-theme" value="dark">  Dark</label>
+        <label class="theme-opt"><input type="radio" name="st-theme" value="system"> System</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="st-limit">Card Name Limit</label>
+      <div class="limit-row">
+        <input id="st-limit" class="st-number" type="number" min="5" max="100" step="1" />
+        <span class="limit-hint">characters &nbsp;(5 – 100)</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Column Colors</span>
+      <div class="col-color-grid">
+        <div class="col-color-row">
+          <div class="col-color-swatch" style="background:var(--col-blocked)"></div>
+          <span class="col-color-name">Blocked</span>
+          <input type="color" id="st-col-0" class="col-color-input" />
+        </div>
+        <div class="col-color-row">
+          <div class="col-color-swatch" style="background:var(--col-todo)"></div>
+          <span class="col-color-name">To Do</span>
+          <input type="color" id="st-col-1" class="col-color-input" />
+        </div>
+        <div class="col-color-row">
+          <div class="col-color-swatch" style="background:var(--col-inprogress)"></div>
+          <span class="col-color-name">In Progress</span>
+          <input type="color" id="st-col-2" class="col-color-input" />
+        </div>
+        <div class="col-color-row">
+          <div class="col-color-swatch" style="background:var(--col-done)"></div>
+          <span class="col-color-name">Done</span>
+          <input type="color" id="st-col-3" class="col-color-input" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost st-reset-btn" id="st-reset">Reset defaults</button>
+      <button class="btn-ghost" id="st-cancel">Cancel</button>
+      <button class="btn-primary" id="st-save">Save</button>
+    </div>
+  </div>
+</div>
 
 <canvas id="celebCanvas"></canvas>
 <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Script load order matters: state → storage → render → modal → celebrate → main -->
+<!-- Script load order matters: state → storage → settings → render → modal → celebrate → main -->
 <script src="js/state.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/render.js"></script>
 <script src="js/modal.js"></script>
 <script src="js/celebrate.js"></script>

@@ -7,28 +7,16 @@ function openModal(id, defaultCol = 1) {
   document.getElementById('m-save').textContent  = id ? 'Save Changes' : 'Save Card';
 
   const nameInput = document.getElementById('m-name');
+  nameInput.maxLength = settings.cardNameLimit;
   nameInput.value = card ? card.n : '';
   updateCharCount();
 
-  // Column radios
-  const colRadios = document.getElementById('col-radios');
-  colRadios.innerHTML = '';
-  colRadios.setAttribute('role', 'radiogroup');
-  colRadios.setAttribute('aria-label', 'Column');
-  const selCol = card !== null ? card.s : defaultCol;
-  COLS.forEach(col => {
-    const lbl = document.createElement('label');
-    lbl.className = 'col-rl' + (selCol === col.id ? ' sel' : '');
-    lbl.dataset.col = col.id;
-    lbl.innerHTML =
-      `<input type="radio" name="m-col" value="${col.id}" ${selCol === col.id ? 'checked' : ''}>` +
-      `<div class="rl-dot"></div>${col.name}`;
-    lbl.querySelector('input').addEventListener('change', () => {
-      colRadios.querySelectorAll('.col-rl').forEach(l => l.classList.remove('sel'));
-      lbl.classList.add('sel');
-    });
-    colRadios.appendChild(lbl);
-  });
+  // Column (read-only — derived from origin, shown as tag in header)
+  editingCol = card !== null ? card.s : defaultCol;
+  const colTag = document.getElementById('m-col-tag');
+  colTag.textContent = '' + COLS.find(c => c.id === editingCol).name;
+  colTag.dataset.col = editingCol;
+  document.querySelector('.modal').dataset.col = editingCol;
 
   // Size radios
   const sizeRadios = document.getElementById('size-radios');
@@ -66,7 +54,7 @@ function saveModal() {
     alert('Maximum 70 cards reached. Clear some cards to add more.');
     return;
   }
-  const col = parseInt(document.querySelector('input[name="m-col"]:checked')?.value ?? 1);
+  const col = editingCol;
   const sz  = parseInt(document.querySelector('input[name="m-sz"]:checked')?.value  ?? 0);
 
   if (editingId) {
@@ -84,6 +72,6 @@ function saveModal() {
 function updateCharCount() {
   const len = document.getElementById('m-name').value.length;
   const el = document.getElementById('char-count');
-  el.textContent = `${len} / 20`;
-  el.className = 'char-count' + (len >= 18 ? ' warn' : '');
+  el.textContent = `${len} / ${settings.cardNameLimit}`;
+  el.className = 'char-count' + (len >= settings.cardNameLimit - 2 ? ' warn' : '');
 }

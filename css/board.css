@@ -92,6 +92,8 @@
 
 .card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.35); }
 .card.dragging { opacity: 0.45; cursor: grabbing; }
+.card:focus { outline: none; }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .card-name {
   font-size: 0.875rem;
@@ -114,7 +116,8 @@
   transition: opacity 0.15s;
 }
 
-.card:hover .card-actions { opacity: 1; }
+.card:hover .card-actions,
+.card:focus-visible .card-actions { opacity: 1; }
 
 .card-btn {
   width: 26px;
