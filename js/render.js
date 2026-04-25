@@ -155,7 +155,7 @@ function buildCard(card) {
     } else if (e.key === 'b' && card.s !== 0) {
       e.preventDefault();
       moveCard(card.i, 0);
-    } else if (e.key === 'm' && (card.s === 1 || card.s === 2)) {
+    } else if (e.key === 'd' && (card.s === 1 || card.s === 2)) {
       e.preventDefault();
       moveCard(card.i, 3, true);
     }
