@@ -1,10 +1,11 @@
-import { COLS } from './board.js';
+import { COLS } from '../core/board.js';
+import { DragDrop } from '../interaction/dragdrop.js';
 
 export class Renderer {
-  constructor(board, settings, bus) {
+  constructor(board, bus) {
     this._board = board;
-    this._settings = settings;
     this._bus = bus;
+    this._dragDrop = new DragDrop(board, bus);
   }
 
   render() {
@@ -44,49 +45,7 @@ export class Renderer {
     cardsEl.dataset.col = col.id;
     colCards.forEach(card => cardsEl.appendChild(this._buildCard(card)));
 
-    let dropBeforeId = null;
-    const indicator = document.createElement('div');
-    indicator.className = 'drop-indicator';
-
-    const getNearestCard = y => {
-      const els = [...cardsEl.querySelectorAll('.card:not(.dragging)')];
-      for (const c of els) {
-        const { top, height } = c.getBoundingClientRect();
-        if (y < top + height / 2) return c;
-      }
-      return null;
-    };
-
-    cardsEl.addEventListener('dragover', e => {
-      e.preventDefault();
-      cardsEl.classList.add('drag-over');
-      const nearest = getNearestCard(e.clientY);
-      dropBeforeId = nearest ? nearest.dataset.id : null;
-      if (nearest) cardsEl.insertBefore(indicator, nearest);
-      else cardsEl.appendChild(indicator);
-    });
-
-    cardsEl.addEventListener('dragleave', e => {
-      if (!cardsEl.contains(e.relatedTarget)) {
-        cardsEl.classList.remove('drag-over');
-        indicator.remove();
-        dropBeforeId = null;
-      }
-    });
-
-    cardsEl.addEventListener('drop', e => {
-      e.preventDefault();
-      cardsEl.classList.remove('drag-over');
-      indicator.remove();
-      const id = e.dataTransfer.getData('cardId');
-      const card = this._board.getCard(id);
-      if (!card) return;
-      const wasntDone = card.s !== 3;
-      this._board.insertCard(id, col.id, dropBeforeId);
-      if (col.id === 3 && wasntDone) this._bus.emit('card:celebrate');
-      this._bus.emit('board:changed');
-      dropBeforeId = null;
-    });
+    this._dragDrop.wireColumn(cardsEl, col.id);
 
     colEl.appendChild(cardsEl);
 
@@ -114,7 +73,24 @@ export class Renderer {
 
     const foot = document.createElement('div');
     foot.className = 'card-footer';
+    foot.appendChild(this._buildActions(card, el));
+    foot.appendChild(this._buildSizeDots(card));
+    el.appendChild(foot);
 
+    el.appendChild(this._buildDelPop(card));
+
+    this._dragDrop.wireCard(el, card.i);
+
+    el.addEventListener('click', e => {
+      if (e.target === el || e.target.classList.contains('card-name') || e.target.classList.contains('size-dots') || e.target.classList.contains('dot')) {
+        el.focus();
+      }
+    });
+
+    return el;
+  }
+
+  _buildActions(card, el) {
     const acts = document.createElement('div');
     acts.className = 'card-actions';
 
@@ -122,14 +98,16 @@ export class Renderer {
       acts.appendChild(this._mkBtn('✏️', 'btn-edit', 'Edit card',    () => this._bus.emit('modal:open', card.i)));
       acts.appendChild(this._mkBtn('🗑',  'btn-del',  'Delete card', () => this._showDelPop(el)));
     } else if (card.s === 1 || card.s === 2) {
-      acts.appendChild(this._mkBtn('⛔', 'btn-block', 'Block this task', () => this._moveCard(card.i, 0)));
+      acts.appendChild(this._mkBtn('⛔', 'btn-block', 'Block this task', () => { this._board.moveCard(card.i, 0); this._bus.emit('board:changed'); }));
       acts.appendChild(this._mkBtn('✏️', 'btn-edit',  'Edit card',       () => this._bus.emit('modal:open', card.i)));
       acts.appendChild(this._mkBtn('🗑',  'btn-del',  'Delete card',     () => this._showDelPop(el)));
-      acts.appendChild(this._mkBtn('✅', 'btn-done',  'Mark as done',    () => this._moveCard(card.i, 3, true)));
+      acts.appendChild(this._mkBtn('✅', 'btn-done',  'Mark as done',    () => { this._board.moveCard(card.i, 3); this._bus.emit('card:celebrate'); this._bus.emit('board:changed'); }));
     }
 
-    foot.appendChild(acts);
+    return acts;
+  }
 
+  _buildSizeDots(card) {
     const dotsEl = document.createElement('div');
     dotsEl.className = 'size-dots';
     for (let i = 0; i < 3; i++) {
@@ -137,9 +115,10 @@ export class Renderer {
       d.className = 'dot' + (i < card.z ? ' on' : '');
       dotsEl.appendChild(d);
     }
-    foot.appendChild(dotsEl);
-    el.appendChild(foot);
+    return dotsEl;
+  }
 
+  _buildDelPop(card) {
     const pop = document.createElement('div');
     pop.className = 'del-pop';
     pop.innerHTML =
@@ -155,67 +134,7 @@ export class Renderer {
       e.stopPropagation();
       pop.classList.remove('open');
     });
-    el.appendChild(pop);
-
-    el.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('cardId', card.i);
-      setTimeout(() => el.classList.add('dragging'), 0);
-    });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-
-    el.addEventListener('click', e => {
-      if (e.target === el || e.target.classList.contains('card-name') || e.target.classList.contains('size-dots') || e.target.classList.contains('dot')) {
-        el.focus();
-      }
-    });
-
-    el.addEventListener('keydown', e => {
-      if (e.target !== el) return;
-      if (document.querySelector('.del-pop.open')) return;
-
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        const colCards = [...document.querySelectorAll(`.col-cards[data-col="${card.s}"] .card`)];
-        const idx = colCards.indexOf(el);
-        (e.key === 'ArrowUp' ? colCards[idx - 1] : colCards[idx + 1])?.focus();
-        return;
-      }
-
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        const dir = e.key === 'ArrowRight' ? 1 : -1;
-        for (let col = card.s + dir; col >= 0 && col <= 3; col += dir) {
-          const first = document.querySelector(`.col-cards[data-col="${col}"] .card`);
-          if (first) { first.focus(); break; }
-        }
-        return;
-      }
-
-      if (card.s === 3) return;
-
-      const id = card.i;
-      if (e.key === 'e' || e.key === 'Enter') {
-        e.preventDefault();
-        this._bus.emit('modal:open', id);
-      } else if (e.key === 'Delete' || e.key === 'Backspace') {
-        e.preventDefault();
-        this._showDelPop(el);
-      } else if (e.key === 'b' && card.s !== 0) {
-        e.preventDefault();
-        this._moveCard(id, 0);
-      } else if (e.key === 'd' && (card.s === 1 || card.s === 2)) {
-        e.preventDefault();
-        this._moveCard(id, 3, true);
-      }
-    });
-
-    return el;
-  }
-
-  _moveCard(id, toCol, celebrate = false) {
-    this._board.moveCard(id, toCol);
-    if (celebrate) this._bus.emit('card:celebrate');
-    this._bus.emit('board:changed');
+    return pop;
   }
 
   _mkBtn(icon, cls, title, handler) {

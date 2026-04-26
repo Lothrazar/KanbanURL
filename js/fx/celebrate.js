@@ -1,4 +1,4 @@
-export class CelebrationManager {
+export class Celebrations {
   constructor(settings) {
     this._settings = settings;
     this._canvas = $('celebCanvas');

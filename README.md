@@ -47,27 +47,33 @@ python -m http.server
 ## Project layout
 
 ```
-index.html        markup, loads js/main.js as an ES module
+index.html        markup, loads js/app.js as an ES module
 css/
   base.css        reset, variables, header, footer
   board.css       board, columns, cards
   modal.css       add/edit modal + settings modal
   effects.css     delete popover, canvas, toast
 js/
-  board.js        Card + Board classes, COLS/SIZES constants
-  eventbus.js     lightweight EventBus (on/emit/off)
-  settings.js     Settings class — load/persist/apply, settings panel UI
-  storage.js      Storage class — URL encoding, budget meter
-  render.js       Renderer class — board/card DOM building
-  modal.js        Modal class — add/edit card logic
-  celebrate.js    CelebrationManager class — canvas animations
-  main.js         App class — wires all classes together, entry point
-  polyfill.js     deepClone shim + $ helper
-  state.js        (superseded by board.js)
+  board.js          Card + Board classes, COLS/SIZES constants
+  eventbus.js       lightweight EventBus (on/emit/off)
+  settings.js       Settings class — load/persist/apply data
+  settings-panel.js SettingsPanel class — settings overlay UI
+  storage.js        Storage class — URL + localStorage persistence
+  budget.js         BudgetMeter class — URL-size meter UI
+  render.js         Renderer class — board/card DOM building
+  dragdrop.js       DragDrop class — drag-and-drop wiring
+  keyboard.js       Keyboard class — keyboard shortcuts
+  modal.js          Modal class — add/edit card logic
+  restore.js        RestoreBanner class — unsaved-changes banner
+  toolbar.js        Toolbar class — header buttons + url-info
+  toast.js          Toast class — transient toast notifications
+  celebrate.js      Celebrations class — canvas animations
+  app.js            App class — wires all classes together, entry point
+  polyfill.js       deepClone shim + $ helper
 PLAN.md           full spec, data model, roadmap
 ```
 
-ES modules with a single `<script type="module" src="js/main.js">` entry point. No bundler required.
+ES modules with a single `<script type="module" src="js/app.js">` entry point. No bundler required.
 
 ## Data model
 

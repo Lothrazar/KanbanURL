@@ -150,8 +150,11 @@ footer {
   height: 100%;
   border-radius: 99px;
   transition: width 0.35s, background 0.35s;
-  background: var(--col-done);
 }
+
+.budget-fill.budget-ok     { background: var(--col-done); }
+.budget-fill.budget-warn   { background: var(--col-inprogress); }
+.budget-fill.budget-danger { background: var(--col-blocked); }
 
 .footer-actions {
   display: flex;

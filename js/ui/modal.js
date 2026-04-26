@@ -1,4 +1,4 @@
-import { COLS, SIZES } from './board.js';
+import { COLS, SIZES } from '../core/board.js';
 
 export class Modal {
   constructor(board, settings, bus) {

@@ -1,8 +1,8 @@
 export const COLS = [
-  { id: 0, name: 'Blocked',     color: '#ef4444' },
-  { id: 1, name: 'To Do',       color: '#6366f1' },
-  { id: 2, name: 'In Progress', color: '#f59e0b' },
-  { id: 3, name: 'Done',        color: '#10b981' },
+  { id: 0, name: 'Blocked' },
+  { id: 1, name: 'To Do' },
+  { id: 2, name: 'In Progress' },
+  { id: 3, name: 'Done' },
 ];
 
 export const SIZES = [
