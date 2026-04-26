@@ -123,6 +123,7 @@ header {
 .new-board-btn:hover { color: var(--text); border-color: var(--muted); }
 .new-board-btn:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
 
+
 /*  FOOTER ─ */
 footer {
   display: flex;
@@ -152,6 +153,13 @@ footer {
   background: var(--col-done);
 }
 
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
 .settings-btn {
   display: flex;
   align-items: center;
@@ -159,7 +167,6 @@ footer {
   width: 26px;
   height: 26px;
   flex-shrink: 0;
-  margin-left: auto;
   background: none;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -170,3 +177,102 @@ footer {
 
 .settings-btn:hover { color: var(--text); border-color: var(--muted); }
 .settings-btn:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
+
+/* ── Restore banner ── */
+.restore-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 24px;
+  background: #78350f;
+  color: #fef3c7;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #92400e;
+  flex-shrink: 0;
+  animation: slideBannerIn 0.2s ease;
+}
+.restore-banner[hidden] { display: none; }
+.restore-banner > svg { flex-shrink: 0; opacity: 0.85; }
+#restore-banner-msg { flex: 1; }
+.restore-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.btn-restore {
+  padding: 4px 12px;
+  background: #fef3c7;
+  color: #78350f;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-restore:hover { background: #fff; }
+
+.btn-restore-dismiss {
+  padding: 4px 10px;
+  background: transparent;
+  color: #fde68a;
+  border: 1px solid #92400e;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-restore-dismiss:hover { background: rgba(255,255,255,0.1); }
+
+@keyframes slideBannerIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── URL info button & tooltip ── */
+.url-info-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.url-info-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+.url-info-btn:hover,
+.url-info-btn.open { color: var(--text); border-color: var(--muted); }
+.url-info-btn:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
+
+.url-info-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  z-index: 200;
+  animation: fadeTooltipIn 0.12s ease;
+}
+.url-info-tooltip[hidden] { display: none; }
+.url-info-tooltip strong { color: var(--accent); }
+
+@keyframes fadeTooltipIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

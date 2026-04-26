@@ -8,6 +8,8 @@ import { EventBus } from './eventbus.js';
 
 class App {
   constructor() {
+    this._restoreData = null;
+    this._restoreBannerIsBlankSlate = false;
     this.bus          = new EventBus();
     this.board        = new Board();
     this.settings     = new Settings();
@@ -23,6 +25,8 @@ class App {
   _wireEvents() {
     this.bus.on('board:changed', () => {
       this.storage.saveToURL(this.board);
+      this.storage.saveToLocalStorage(this.board);
+      if (this._restoreData) this._hideRestoreBanner();
       this.renderer.render();
     });
     this.bus.on('card:celebrate', () => this.celebrations.celebrate());
@@ -34,6 +38,10 @@ class App {
     document.addEventListener('click', e => {
       if (!e.target.closest('.del-pop') && !e.target.closest('.btn-del')) {
         document.querySelectorAll('.del-pop.open').forEach(p => p.classList.remove('open'));
+      }
+      if (!e.target.closest('#url-info-btn') && !e.target.closest('#url-info-tooltip')) {
+        $('url-info-tooltip').setAttribute('hidden', '');
+        $('url-info-btn').classList.remove('open');
       }
     });
 
@@ -49,6 +57,32 @@ class App {
         e.stopPropagation();
         openPop.classList.remove('open');
       }
+    });
+
+    $('url-info-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      const tooltip = $('url-info-tooltip');
+      const open = tooltip.hasAttribute('hidden');
+      tooltip.toggleAttribute('hidden', !open);
+      $('url-info-btn').classList.toggle('open', open);
+    });
+
+    $('restore-btn').addEventListener('click', () => {
+      if (!this._restoreData) return;
+      this.board.loadFromData(this._restoreData);
+      this.storage.saveToURL(this.board);
+      this.storage.clearLocalStorage();
+      this._hideRestoreBanner();
+      this.renderer.render();
+      this.storage.updateBudget(
+        new URLSearchParams(location.search).get('d') || '',
+        this.board.cards.length
+      );
+    });
+
+    $('restore-dismiss').addEventListener('click', () => {
+      this.storage.clearLocalStorage();
+      this._hideRestoreBanner();
     });
 
     $('board-title').addEventListener('input', e => {
@@ -71,14 +105,53 @@ class App {
     this.settings.load();
     this.settings.apply();
 
-    const saved = this.storage.loadFromURL();
-    if (saved) this.board.loadFromData(saved);
+    const urlData   = this.storage.loadFromURL();
+    const localData = this.storage.loadFromLocalStorage();
+
+    if (urlData) {
+      this.board.loadFromData(urlData);
+      if (localData && JSON.stringify(urlData) !== JSON.stringify(localData.board)) {
+        this._showRestoreBanner(localData.savedAt, localData.board, false);
+      }
+    } else if (localData) {
+      this._showRestoreBanner(localData.savedAt, localData.board, true);
+    }
 
     this.renderer.render();
     this.storage.updateBudget(
       new URLSearchParams(location.search).get('d') || '',
       this.board.cards.length
     );
+  }
+
+  _showRestoreBanner(savedAt, boardData, blankSlate) {
+    this._restoreData = boardData;
+    this._restoreBannerIsBlankSlate = blankSlate;
+    $('restore-banner-msg').textContent = blankSlate
+      ? `You have a previously saved board from ${this._formatTimeAgo(savedAt)}.`
+      : `You have unsaved changes from ${this._formatTimeAgo(savedAt)} — restore to continue where you left off.`;
+    $('restore-btn').textContent     = blankSlate ? 'Open it'     : 'Restore changes';
+    $('restore-dismiss').textContent = blankSlate ? 'Start fresh' : 'Dismiss';
+    $('restore-banner').removeAttribute('hidden');
+  }
+
+  _hideRestoreBanner() {
+    $('restore-banner').setAttribute('hidden', '');
+    $('restore-btn').textContent     = 'Restore changes';
+    $('restore-dismiss').textContent = 'Dismiss';
+    this._restoreData = null;
+    this._restoreBannerIsBlankSlate = false;
+  }
+
+  _formatTimeAgo(ts) {
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} minute${mins !== 1 ? 's' : ''} ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hour${hrs !== 1 ? 's' : ''} ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day${days !== 1 ? 's' : ''} ago`;
   }
 
   _showToast(msg) {

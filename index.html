@@ -28,6 +28,17 @@
   </button>
 </header>
 
+<div class="restore-banner" id="restore-banner" hidden>
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <span id="restore-banner-msg">You have unsaved changes from earlier.</span>
+  <div class="restore-banner-actions">
+    <button class="btn-restore" id="restore-btn">Restore changes</button>
+    <button class="btn-restore-dismiss" id="restore-dismiss">Dismiss</button>
+  </div>
+</div>
+
 <div class="board" id="board"></div>
 
 <!-- Modal -->
@@ -59,12 +70,20 @@
     <div class="budget-fill" id="budget-fill" style="width:0%"></div>
   </div>
   <span id="card-count-label">0 cards</span>
-  <button class="settings-btn" id="settings-btn" title="Settings" aria-label="Settings">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>
-  </button>
+  <div class="footer-actions">
+    <div class="url-info-wrap">
+      <button class="url-info-btn" id="url-info-btn" aria-label="How saving works">?</button>
+      <div class="url-info-tooltip" id="url-info-tooltip" hidden>
+        Your board is saved in the URL automatically. To keep your changes, bookmark it — press <strong>Ctrl+D</strong> / <strong>⌘D</strong>.
+      </div>
+    </div>
+    <button class="settings-btn" id="settings-btn" title="Settings" aria-label="Settings">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
 </footer>
 
 <!-- Settings Modal -->

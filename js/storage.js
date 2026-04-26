@@ -36,6 +36,29 @@ export class Storage {
     fill.style.background = pct < 60 ? '#10b981' : pct < 85 ? '#f59e0b' : '#ef4444';
   }
 
+  saveToLocalStorage(board) {
+    try {
+      localStorage.setItem('kanbanurl_board', JSON.stringify({
+        board: board.toJSON(),
+        savedAt: Date.now()
+      }));
+    } catch(e) {}
+  }
+
+  loadFromLocalStorage() {
+    try {
+      const raw = localStorage.getItem('kanbanurl_board');
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch(e) {
+      return null;
+    }
+  }
+
+  clearLocalStorage() {
+    try { localStorage.removeItem('kanbanurl_board'); } catch(e) {}
+  }
+
   _u8ToB64(arr) {
     let s = '';
     for (let i = 0; i < arr.length; i++) s += String.fromCharCode(arr[i]);
