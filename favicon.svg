@@ -1,3 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <text y=".9em" font-size="90">🟦</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 18">
+  <!-- three bars aligned to bottom, matching .logo-bars -->
+  <rect x="0"  y="8"  width="6" height="10" rx="2" fill="#ef4444"/>
+  <rect x="8"  y="0"  width="6" height="18" rx="2" fill="#6366f1"/>
+  <rect x="16" y="4"  width="6" height="14" rx="2" fill="#f59e0b"/>
 </svg>
