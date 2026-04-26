@@ -32,7 +32,7 @@ The board title is part of the URL state and travels with the board when shared.
 
 ## Running locally
 
-It's a static site with no build step. Either:
+It's a static site with no build step, but ES modules require a local server (browsers block `file://` imports). Either:
 
 ```bash
 npx serve .
@@ -40,29 +40,30 @@ npx serve .
 python -m http.server
 ```
 
-…or just open `index.html` in a browser.
-
 ## Project layout
 
 ```
-index.html        markup + script tags
+index.html        markup, loads js/main.js as an ES module
 css/
   base.css        reset, variables, header, footer
   board.css       board, columns, cards
   modal.css       add/edit modal + settings modal
   effects.css     delete popover, canvas, toast
 js/
-  state.js        state object, constants, settings defaults
-  storage.js      URL encoding, budget meter
-  settings.js     settings load/persist/apply, settings modal UI
-  render.js       board / card rendering
-  modal.js        add/edit modal logic
-  celebrate.js    canvas animations
-  main.js         event wiring & init
+  board.js        Card + Board classes, COLS/SIZES constants
+  eventbus.js     lightweight EventBus (on/emit/off)
+  settings.js     Settings class — load/persist/apply, settings panel UI
+  storage.js      Storage class — URL encoding, budget meter
+  render.js       Renderer class — board/card DOM building
+  modal.js        Modal class — add/edit card logic
+  celebrate.js    CelebrationManager class — canvas animations
+  main.js         App class — wires all classes together, entry point
+  polyfill.js     deepClone shim + $ helper
+  state.js        (superseded by board.js)
 PLAN.md           full spec, data model, roadmap
 ```
 
-Plain `<script>` tags — no bundler, no modules. Load order matters and is set in `index.html`.
+ES modules with a single `<script type="module" src="js/main.js">` entry point. No bundler required.
 
 ## Data model
 

@@ -142,15 +142,8 @@
 <canvas id="celebCanvas"></canvas>
 <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Script load order matters: polyfill → state → storage → settings → render → modal → celebrate → main -->
 <script src="js/polyfill.js"></script>
-<script src="js/state.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/render.js"></script>
-<script src="js/modal.js"></script>
-<script src="js/celebrate.js"></script>
-<script src="js/main.js"></script>
+<script type="module" src="js/main.js"></script>
 
 </body>
 </html>
