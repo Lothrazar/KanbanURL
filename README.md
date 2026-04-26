@@ -47,30 +47,33 @@ python -m http.server
 ## Project layout
 
 ```
-index.html        markup, loads js/app.js as an ES module
+index.html          markup, loads js/app.js as an ES module
 css/
-  base.css        reset, variables, header, footer
-  board.css       board, columns, cards
-  modal.css       add/edit modal + settings modal
-  effects.css     delete popover, canvas, toast
+  base.css          reset, CSS variables, header, footer
+  board.css         board, columns, cards
+  modal.css         add/edit modal + settings panel
+  effects.css       delete popover, canvas, toast
 js/
-  board.js          Card + Board classes, COLS/SIZES constants
-  eventbus.js       lightweight EventBus (on/emit/off)
-  settings.js       Settings class — load/persist/apply data
-  settings-panel.js SettingsPanel class — settings overlay UI
-  storage.js        Storage class — URL + localStorage persistence
-  budget.js         BudgetMeter class — URL-size meter UI
-  render.js         Renderer class — board/card DOM building
-  dragdrop.js       DragDrop class — drag-and-drop wiring
-  keyboard.js       Keyboard class — keyboard shortcuts
-  modal.js          Modal class — add/edit card logic
-  restore.js        RestoreBanner class — unsaved-changes banner
-  toolbar.js        Toolbar class — header buttons + url-info
-  toast.js          Toast class — transient toast notifications
-  celebrate.js      Celebrations class — canvas animations
-  app.js            App class — wires all classes together, entry point
+  app.js            App class — wires everything together, entry point
   polyfill.js       deepClone shim + $ helper
-PLAN.md           full spec, data model, roadmap
+  core/
+    board.js        Card + Board classes, COLS/SIZES constants
+    eventbus.js     lightweight EventBus (on/emit/off)
+    settings.js     Settings class — load/persist/apply theme + colors
+    storage.js      Storage class — URL + localStorage persistence
+  ui/
+    budget.js       BudgetMeter — URL-size progress bar in footer
+    modal.js        Modal — add/edit card dialog
+    render.js       Renderer — board/card DOM building
+    restore.js      RestoreBanner — unsaved-changes banner
+    settings-panel.js  SettingsPanel — settings overlay UI
+    toast.js        Toast — transient notifications
+    toolbar.js      Toolbar — header buttons + URL-info tooltip
+  interaction/
+    dragdrop.js     DragDrop — drag-and-drop wiring
+    keyboard.js     Keyboard — keyboard shortcuts
+  fx/
+    celebrate.js    Celebrations — canvas animations (confetti, fireworks, etc.)
 ```
 
 ES modules with a single `<script type="module" src="js/app.js">` entry point. No bundler required.

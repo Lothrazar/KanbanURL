@@ -147,20 +147,25 @@
 .card-btn.btn-block:hover { background: var(--col-blocked); color: #fff; }
 .card-btn.btn-del:hover   { background: var(--col-blocked); color: #fff; }
 
-.size-dots {
+.size-bars {
   display: flex;
-  gap: 3px;
+  gap: 2px;
+  align-items: flex-end;
   margin-left: auto;
+  height: 10px;
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  border: 1.5px solid var(--muted);
+.bar {
+  width: 4px;
+  border-radius: 1px;
+  background: var(--surface2);
 }
 
-.dot.on { background: #fbbf24; border-color: #fbbf24; }
+.bar:nth-child(1) { height: 4px; }
+.bar:nth-child(2) { height: 7px; }
+.bar:nth-child(3) { height: 10px; }
+
+.bar.on { background: var(--bar-on); }
 
 /* "+ Add card" */
 .add-card-btn {

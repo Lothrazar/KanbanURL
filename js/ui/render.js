@@ -74,7 +74,7 @@ export class Renderer {
     const foot = document.createElement('div');
     foot.className = 'card-footer';
     foot.appendChild(this._buildActions(card, el));
-    foot.appendChild(this._buildSizeDots(card));
+    foot.appendChild(this._buildSizeBars(card));
     el.appendChild(foot);
 
     el.appendChild(this._buildDelPop(card));
@@ -82,7 +82,7 @@ export class Renderer {
     this._dragDrop.wireCard(el, card.i);
 
     el.addEventListener('click', e => {
-      if (e.target === el || e.target.classList.contains('card-name') || e.target.classList.contains('size-dots') || e.target.classList.contains('dot')) {
+      if (e.target === el || e.target.classList.contains('card-name') || e.target.classList.contains('size-bars') || e.target.classList.contains('bar')) {
         el.focus();
       }
     });
@@ -107,15 +107,17 @@ export class Renderer {
     return acts;
   }
 
-  _buildSizeDots(card) {
-    const dotsEl = document.createElement('div');
-    dotsEl.className = 'size-dots';
+  _buildSizeBars(card) {
+    const colVars = ['--col-blocked', '--col-todo', '--col-inprogress', '--col-done'];
+    const wrap = document.createElement('div');
+    wrap.className = 'size-bars';
+    wrap.style.setProperty('--bar-on', `var(${colVars[card.s]})`);
     for (let i = 0; i < 3; i++) {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i < card.z ? ' on' : '');
-      dotsEl.appendChild(d);
+      const b = document.createElement('div');
+      b.className = 'bar' + (i < card.z ? ' on' : '');
+      wrap.appendChild(b);
     }
-    return dotsEl;
+    return wrap;
   }
 
   _buildDelPop(card) {
