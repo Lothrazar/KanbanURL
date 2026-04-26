@@ -10,6 +10,7 @@ export class Modal {
   }
 
   open(id, defaultCol = 1) {
+    this._opener = document.activeElement;
     this._editingId = id || null;
     const card = id ? this._board.getCard(id) : null;
 
@@ -61,6 +62,8 @@ export class Modal {
   close() {
     $('overlay').classList.remove('open');
     this._editingId = null;
+    this._opener?.focus();
+    this._opener = null;
   }
 
   save() {

@@ -24,10 +24,12 @@ class App {
 
   _wireEvents() {
     this.bus.on('board:changed', () => {
+      const focusedId = document.activeElement?.dataset?.id;
       this.storage.saveToURL(this.board);
       this.storage.saveToLocalStorage(this.board);
       if (this._restoreData) this._hideRestoreBanner();
       this.renderer.render();
+      if (focusedId) document.querySelector(`[data-id="${focusedId}"]`)?.focus();
     });
     this.bus.on('card:celebrate', () => this.celebrations.celebrate());
     this.bus.on('modal:open', (id, col) => this.modal.open(id, col));
@@ -47,15 +49,25 @@ class App {
 
     document.addEventListener('keydown', e => {
       const openPop = document.querySelector('.del-pop.open');
-      if (!openPop) return;
-      if (e.key === 'Enter') {
+      if (openPop) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          openPop.querySelector('.pop-yes').click();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          openPop.classList.remove('open');
+        }
+        return;
+      }
+
+      const tag = document.activeElement?.tagName;
+      const inInput = tag === 'INPUT' || tag === 'TEXTAREA';
+      const modalOpen = this.modal.isOpen() || this.settings.isPanelOpen();
+      if (!inInput && !modalOpen && e.key === 'n') {
         e.preventDefault();
-        e.stopPropagation();
-        openPop.querySelector('.pop-yes').click();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        openPop.classList.remove('open');
+        this.bus.emit('modal:open', null, 1);
       }
     });
 

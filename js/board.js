@@ -53,6 +53,20 @@ export class Board {
     return card || null;
   }
 
+  insertCard(id, toCol, beforeId) {
+    const card = this.cards.find(c => c.i === id);
+    if (!card) return null;
+    card.s = toCol;
+    this.cards = this.cards.filter(c => c.i !== id);
+    if (beforeId == null) {
+      this.cards.push(card);
+    } else {
+      const idx = this.cards.findIndex(c => c.i === beforeId);
+      this.cards.splice(idx === -1 ? this.cards.length : idx, 0, card);
+    }
+    return card;
+  }
+
   updateCard(id, name, size, col) {
     const card = this.cards.find(c => c.i === id);
     if (card) { card.n = name; card.z = size; card.s = col; }

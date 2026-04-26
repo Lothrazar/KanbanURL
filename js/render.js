@@ -44,19 +44,48 @@ export class Renderer {
     cardsEl.dataset.col = col.id;
     colCards.forEach(card => cardsEl.appendChild(this._buildCard(card)));
 
-    cardsEl.addEventListener('dragover', e => { e.preventDefault(); cardsEl.classList.add('drag-over'); });
-    cardsEl.addEventListener('dragleave', () => cardsEl.classList.remove('drag-over'));
+    let dropBeforeId = null;
+    const indicator = document.createElement('div');
+    indicator.className = 'drop-indicator';
+
+    const getNearestCard = y => {
+      const els = [...cardsEl.querySelectorAll('.card:not(.dragging)')];
+      for (const c of els) {
+        const { top, height } = c.getBoundingClientRect();
+        if (y < top + height / 2) return c;
+      }
+      return null;
+    };
+
+    cardsEl.addEventListener('dragover', e => {
+      e.preventDefault();
+      cardsEl.classList.add('drag-over');
+      const nearest = getNearestCard(e.clientY);
+      dropBeforeId = nearest ? nearest.dataset.id : null;
+      if (nearest) cardsEl.insertBefore(indicator, nearest);
+      else cardsEl.appendChild(indicator);
+    });
+
+    cardsEl.addEventListener('dragleave', e => {
+      if (!cardsEl.contains(e.relatedTarget)) {
+        cardsEl.classList.remove('drag-over');
+        indicator.remove();
+        dropBeforeId = null;
+      }
+    });
+
     cardsEl.addEventListener('drop', e => {
       e.preventDefault();
       cardsEl.classList.remove('drag-over');
+      indicator.remove();
       const id = e.dataTransfer.getData('cardId');
       const card = this._board.getCard(id);
-      if (card && card.s !== col.id) {
-        const wasntDone = card.s !== 3;
-        this._board.moveCard(id, col.id);
-        if (col.id === 3 && wasntDone) this._bus.emit('card:celebrate');
-        this._bus.emit('board:changed');
-      }
+      if (!card) return;
+      const wasntDone = card.s !== 3;
+      this._board.insertCard(id, col.id, dropBeforeId);
+      if (col.id === 3 && wasntDone) this._bus.emit('card:celebrate');
+      this._bus.emit('board:changed');
+      dropBeforeId = null;
     });
 
     colEl.appendChild(cardsEl);
@@ -93,7 +122,7 @@ export class Renderer {
       acts.appendChild(this._mkBtn('✏️', 'btn-edit', 'Edit card',    () => this._bus.emit('modal:open', card.i)));
       acts.appendChild(this._mkBtn('🗑',  'btn-del',  'Delete card', () => this._showDelPop(el)));
     } else if (card.s === 1 || card.s === 2) {
-      acts.appendChild(this._mkBtn('⬅️', 'btn-block', 'Block this task', () => this._moveCard(card.i, 0)));
+      acts.appendChild(this._mkBtn('⛔', 'btn-block', 'Block this task', () => this._moveCard(card.i, 0)));
       acts.appendChild(this._mkBtn('✏️', 'btn-edit',  'Edit card',       () => this._bus.emit('modal:open', card.i)));
       acts.appendChild(this._mkBtn('🗑',  'btn-del',  'Delete card',     () => this._showDelPop(el)));
       acts.appendChild(this._mkBtn('✅', 'btn-done',  'Mark as done',    () => this._moveCard(card.i, 3, true)));
@@ -134,22 +163,49 @@ export class Renderer {
     });
     el.addEventListener('dragend', () => el.classList.remove('dragging'));
 
+    el.addEventListener('click', e => {
+      if (e.target === el || e.target.classList.contains('card-name') || e.target.classList.contains('size-dots') || e.target.classList.contains('dot')) {
+        el.focus();
+      }
+    });
+
     el.addEventListener('keydown', e => {
       if (e.target !== el) return;
       if (document.querySelector('.del-pop.open')) return;
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const colCards = [...document.querySelectorAll(`.col-cards[data-col="${card.s}"] .card`)];
+        const idx = colCards.indexOf(el);
+        (e.key === 'ArrowUp' ? colCards[idx - 1] : colCards[idx + 1])?.focus();
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        for (let col = card.s + dir; col >= 0 && col <= 3; col += dir) {
+          const first = document.querySelector(`.col-cards[data-col="${col}"] .card`);
+          if (first) { first.focus(); break; }
+        }
+        return;
+      }
+
       if (card.s === 3) return;
+
+      const id = card.i;
       if (e.key === 'e' || e.key === 'Enter') {
         e.preventDefault();
-        this._bus.emit('modal:open', card.i);
+        this._bus.emit('modal:open', id);
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
         this._showDelPop(el);
       } else if (e.key === 'b' && card.s !== 0) {
         e.preventDefault();
-        this._moveCard(card.i, 0);
+        this._moveCard(id, 0);
       } else if (e.key === 'd' && (card.s === 1 || card.s === 2)) {
         e.preventDefault();
-        this._moveCard(card.i, 3, true);
+        this._moveCard(id, 3, true);
       }
     });
 

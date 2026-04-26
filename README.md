@@ -1,5 +1,9 @@
 # KanbanURL
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Live page:** [lothrazar.github.io/GithubTools](https://lothrazar.github.io/KanbanURL)
+
 A zero-backend Kanban board where the entire board state lives in the URL. No server, no database, no login — share the URL, share the board.
 
 ## How it works
