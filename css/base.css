@@ -135,6 +135,7 @@ footer {
   font-size: 0.74rem;
   color: var(--muted);
   flex-shrink: 0;
+  position: relative;
 }
 
 .budget-track {
@@ -155,6 +156,21 @@ footer {
 .budget-fill.budget-ok     { background: var(--col-done); }
 .budget-fill.budget-warn   { background: var(--col-inprogress); }
 .budget-fill.budget-danger { background: var(--col-blocked); }
+
+.source-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.74rem;
+  transition: color 0.15s;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.source-link:hover { color: var(--text); }
 
 .footer-actions {
   display: flex;
