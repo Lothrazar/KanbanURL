@@ -4,8 +4,9 @@
   gap: 14px;
   padding: 20px 24px;
   overflow-x: auto;
+  overflow-y: hidden;
   flex: 1;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 /*  COLUMN ─ */
@@ -14,6 +15,8 @@
   flex-direction: column;
   width: 264px;
   min-width: 264px;
+  min-height: 0;
+  overflow: hidden;
   background: var(--surface);
   border-radius: 12px;
 }
@@ -73,6 +76,7 @@
   gap: 6px;
   min-height: 40px;
   flex: 1;
+  overflow-y: auto;
   transition: background 0.15s;
   border-radius: 0 0 8px 8px;
 }
